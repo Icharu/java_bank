@@ -3,12 +3,116 @@
  */
 package org.example;
 
+import java.util.Scanner;
+
+import org.example.model.Investment;
+import org.example.repository.AccountRepository;
+import org.example.repository.InvestmentRepository;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+
+    private final static AccountRepository accountRepository = new AccountRepository();
+    private final static InvestmentRepository investmentRepository = new InvestmentRepository();
+
+    static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+         System.out.println("Olá seja bem vindo ao DIO Bank");
+    while (true) {
+        System.out.println("Selecione a operação desejada:");
+        System.out.println("1 - Criar uma conta");
+        System.out.println("2 - Criar um investimento");
+        System.out.println("3 - Listar investimentos");
+        System.out.println("4 - Depositar na conta");
+        System.out.println("5 - Sacar da conta");
+        System.out.println("6 - Transferência entre contas");
+        System.out.println("7 - Investir");
+        System.out.println("8 - Listar investimentos");
+        System.out.println("9 - Listar contas");
+        System.out.println("10 - Listar investimentos");
+        System.out.println("11 - Listar contas de investimento");
+        System.out.println("12 - Atualizar investimentos");
+        System.out.println("13 - Histórico de investimentos");
+        System.out.println("14 - Histórico de conta");
+        
+        var option = scanner.nextInt();
+
+        switch (option) {
+            case 1 -> createAccount();
+            case 2 -> createInvestment();
+            case 3 -> investmentRepository.list().forEach(System.out::println);
+            case 4 -> deposit();
+            case 5 -> withdraw();
+            case 6 -> transfer();
+            case 7 -> invest();
+            case 8 -> showInvestmentAccounts();
+            case 9 -> accountRepository.list().forEach(System.out::println);
+            case 10 -> investmentRepository.list().forEach(System.out::println);
+            case 11 -> investmentRepository.listAccounts().forEach(System.out::println);
+            case 12 -> investmentRepository.updateInvestments();
+            case 13 -> investmentRepository.showInvestmentHistory();
+            case 14 -> System.exit(0);
+            default -> System.out.println("Opção inválida, tente novamente.");
+        }
     }
+    private static void createAccount() {
+    System.out.println("Informe as chaves pix (separadas por ','): ");
+    var pix = List.of(Arrays.stream(scanner.next().split(",")).toList());
+    System.out.println("Informe o valor inicial de depósito: ");
+    var amount = scanner.nextLong();
+    var wallet = accountRepository.create(pix, amount);
+    System.out.println("Conta criada: " + wallet);
 }
+
+private static void createInvestment() {
+    System.out.println("Informe a taxa do investimento: ");
+    var tax = scanner.nextInt();
+    System.out.println("Informe o valor inicial de depósito: ");
+    var initialFunds = scanner.nextLong();
+    var investment = investmentRepository.create(tax, initialFunds);
+    System.out.println("Investimento criado: " + investment);
+}
+
+private void deposit() {
+    System.out.println("Informe a chave pix da conta para depósito: ");
+    var pix = scanner.next();
+    System.out.println("Informe o valor que será depositado: ");
+    var amount = scanner.nextLong();
+    accountRepository.deposit(pix, amount);
+    System.out.println("Depósito realizado com sucesso.");
+}
+
+private static void withdraw() {
+    System.out.println("Informe a chave pix da conta para saque: ");
+    var pix = scanner.next();
+    System.out.println("Informe o valor que será sacado: ");
+    var amount = scanner.nextLong();
+    accountRepository.withdraw(pix, amount);
+    System.out.println("Saque realizado com sucesso.");
+}
+
+private static void transfer() {
+    System.out.println("Informe a chave pix da conta de origem: ");
+    var fromPix = scanner.next();
+    System.out.println("Informe a chave pix da conta de destino: ");
+    var toPix = scanner.next();
+    System.out.println("Informe o valor que será transferido: ");
+    var amount = scanner.nextLong();
+    accountRepository.transfer(fromPix, toPix, amount);
+    System.out.println("Transferência realizada com sucesso.");
+}
+
+private static void invest() {
+    System.out.println("Informe a chave pix da conta para investir: ");
+    var pix = scanner.next();
+    System.out.println("Informe o valor que será investido: ");
+    var amount = scanner.nextLong();
+    investmentRepository.create(pix, amount);
+    System.out.println("Investimento realizado com sucesso.");
+}
+
+private static void showInvestmentAccounts() {
+    System.out.println("Contas de investimento:");
+    investmentRepository.listAccounts().forEach(System.out::println);
+}
+    }

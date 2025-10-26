@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class InvestimentWallet extends Wallet {
+public class InvestmentWallet extends Wallet {
     private final Investment investment;
 
     private final AccountWallet account;
